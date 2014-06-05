@@ -41,11 +41,6 @@
     if (self) {
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
         [self addGestureRecognizer:panGesture];
-        self.layer.cornerRadius = 10.0f;
-        self.layer.shadowRadius = 5.0f;
-        self.layer.shadowOffset = CGSizeMake(0,0);
-        self.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.layer.shadowOpacity = .5f;
     }
     return self;
 }
@@ -95,7 +90,7 @@
             }
             CGRect f = self.frame;
             f.origin = finalOrigin;
-            [UIView animateWithDuration:.5 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            [UIView animateWithDuration:0.5 delay:0.0 usingSpringWithDamping:0.7 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 self.transform = CGAffineTransformIdentity;
                 self.frame = f;
                 if (velocity.y < 0) {
@@ -104,6 +99,7 @@
                     [self completeTransition];
                 }
             } completion:^(BOOL finished) {
+                
             }];
         }
             break;
@@ -117,8 +113,8 @@
 {
     UIWindow *window = self.superWindow;
     if (window) {
-        CGFloat scale = 1.0 - .05 * (1-percentage);
-        window.transform = CGAffineTransformMakeScale(scale, scale);
+        CGFloat translate = (1 - percentage) * (-kWindowHeaderHeight * 0.5);
+        window.transform = CGAffineTransformMakeTranslation(0, translate);
         window.alpha = percentage;
         if (kRecuriveAnimationEnabled && [window respondsToSelector:@selector(updateTransitionAnimationWithPercentage:)]) {
             [(MWWindow *)window updateTransitionAnimationWithPercentage:percentage];
@@ -130,7 +126,7 @@
 {
     UIWindow *window = self.superWindow;
     if (window) {
-        window.transform = CGAffineTransformMakeScale(.95, .95);
+        window.transform = CGAffineTransformMakeTranslation(0, -kWindowHeaderHeight * 0.5);
         window.alpha = 0;
         if (kRecuriveAnimationEnabled && [window respondsToSelector:@selector(cancelTransition)]) {
             [(MWWindow *)window cancelTransition];
